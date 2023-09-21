@@ -25,6 +25,7 @@ public class MainController {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
 
+    //function that opens a file explorer and prompts user to select a .wav file and processes it
     public void openFileClicked(ActionEvent e) throws IOException {
         System.out.println("Choose a file..");
         FileChooser fc = new FileChooser();
