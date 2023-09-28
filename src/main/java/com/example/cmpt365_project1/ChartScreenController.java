@@ -5,12 +5,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
+import javax.sound.sampled.*;
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,36 +38,74 @@ public class ChartScreenController implements Initializable {
         return object;
     }
 
-    public void run() throws UnsupportedAudioFileException, IOException {
+    public void run() throws IOException {
 
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
-        AudioFormat audioFormat = audioInputStream.getFormat();
+        FileInputStream fileInputStream = new FileInputStream(file);
+        DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 
-        float sampleRate = audioFormat.getSampleRate();
-        System.out.println("Sample Rate: " + sampleRate);
-        byte[] byteArray = audioInputStream.readAllBytes();
-
-        arr = new int[byteArray.length]; //this is null for some reason, probs smth to do with synchronization and scene switching
-        int value = 0;
-        for (int i=0; i<byteArray.length; i++) {
-            value = (value << 8) + (byteArray[i] & 0xFF);
-            arr[i] = value;
-            if (i == 0 || i == 1) {
-                System.out.println("arr: " + arr[i]);
-            }
+        byte[] riff = new byte[4];
+        dataInputStream.read(riff);
+        String riffHeader = new String(riff);
+        if (!riffHeader.equals("RIFF")) {
+            System.out.println("NOT A VALID WAV FILE (RIFF)");
+            return;
         }
+
+        int fileSize = Integer.reverseBytes(dataInputStream.readInt());
+
+        byte[] wave = new byte[4];
+        dataInputStream.read(wave);
+        String waveHeader = new String(wave);
+        if (!waveHeader.equals("WAVE")) {
+            System.out.println("NOT A VALID WAV FILE (WAVE)");
+            return;
+        }
+
+        byte[] fmt = new byte[4];
+        dataInputStream.read(fmt);
+        String fmtHeader = new String(fmt);
+        if (!fmtHeader.equals("fmt ")) {
+            System.out.println("INVALID 'fmt' SUBCHUNK");
+            return;
+        }
+
+        int formatSize = Integer.reverseBytes(dataInputStream.readInt());
+        short audioFormat = Short.reverseBytes(dataInputStream.readShort());
+        short numChannels = Short.reverseBytes(dataInputStream.readShort());
+        int sampleRate = Integer.reverseBytes(dataInputStream.readInt());
+        int byteRate = Integer.reverseBytes(dataInputStream.readInt());
+        short blockAlign = Short.reverseBytes(dataInputStream.readShort());
+        short bitsPerSample = Short.reverseBytes(dataInputStream.readShort());
+        int numSamples = fileSize / (numChannels * bitsPerSample / 8);
+
+        System.out.println("File Size: " + fileSize + " Bytes");
+        System.out.println("Format Size: " + formatSize);
+        System.out.println("Audio Format: " + audioFormat);
+        System.out.println("Channels: " + numChannels);
+        System.out.println("Sample Rate: " + sampleRate + "Hz");
+        System.out.println("Bits per Sample: " + bitsPerSample);
+        System.out.println("Byte Rate: " + byteRate);
+        System.out.println("Block Align: " + blockAlign);
+        System.out.println("Total number of samples: " + numSamples);
+
+        dataInputStream.close();
+        fileInputStream.close();
+///////////////////////////////////////////////////////////////////////////////
+
+//        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+//        AudioFormat audioFormat = audioInputStream.getFormat();
 
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        XYChart.Series series = new XYChart.Series();
-
-        for (int i=0; i<arr.length; i++) {
-            series.getData().add(new XYChart.Data(String.valueOf(i), arr[i]));
-        }
-        System.out.println("Hello");
-        lineChart.getData().addAll(series);
+//        XYChart.Series series = new XYChart.Series();
+//
+//        for (int i=0; i<arr.length; i++) {
+//            series.getData().add(new XYChart.Data(String.valueOf(i), arr[i]));
+//        }
+//        System.out.println("Hello");
+//        lineChart.getData().addAll(series);
     }
 //    public void initialize() throws UnsupportedAudioFileException, IOException {
 //
