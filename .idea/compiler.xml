@@ -9,8 +9,5 @@
         <module name="CMPT365_Project1" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="CMPT365_Project1" target="0" />
-    </bytecodeTargetLevel>
   </component>
 </project>

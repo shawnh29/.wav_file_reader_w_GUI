@@ -76,7 +76,25 @@ public class ChartScreenController implements Initializable {
         int byteRate = Integer.reverseBytes(dataInputStream.readInt());
         short blockAlign = Short.reverseBytes(dataInputStream.readShort());
         short bitsPerSample = Short.reverseBytes(dataInputStream.readShort());
+
+        byte[] dataW = new byte[4];
+        dataInputStream.read(dataW);
+        String dataW_header = new String(dataW);
+        if (!dataW_header.equals("data")) {
+            System.out.println("INVALID 'data' SUBCHUNK");
+            return;
+        }
+
+        int data_len = Integer.reverseBytes(dataInputStream.readInt());
         int numSamples = fileSize / (numChannels * bitsPerSample / 8);
+
+        short[] audioData = new short[data_len / 2];
+        for (int i=0;i<audioData.length; i++) {
+            audioData[i] = Short.reverseBytes(dataInputStream.readShort());
+        }
+//        for (int i=0; i<50; i++) {
+//            System.out.println("Audio data " + i + ": " + audioData[i]);
+//        }
 
         System.out.println("File Size: " + fileSize + " Bytes");
         System.out.println("Format Size: " + formatSize);
@@ -87,6 +105,7 @@ public class ChartScreenController implements Initializable {
         System.out.println("Byte Rate: " + byteRate);
         System.out.println("Block Align: " + blockAlign);
         System.out.println("Total number of samples: " + numSamples);
+        System.out.println("Length of data: " + data_len);
 
         dataInputStream.close();
         fileInputStream.close();
