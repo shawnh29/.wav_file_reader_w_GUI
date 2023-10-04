@@ -17,8 +17,6 @@ public class ChartScreenController implements Initializable {
 
     public static ChartScreenController object;
 
-    private int[] arr;
-
     public void setFile(File file) {
         this.file = file;
     }
@@ -86,7 +84,7 @@ public class ChartScreenController implements Initializable {
         }
 
         int data_len = Integer.reverseBytes(dataInputStream.readInt());
-        int numSamples = fileSize / (numChannels * bitsPerSample / 8);
+        int numSamples = data_len / (numChannels * bitsPerSample / 8);
 
         short[] audioData = new short[data_len / 2];
         for (int i=0;i<audioData.length; i++) {
@@ -107,6 +105,13 @@ public class ChartScreenController implements Initializable {
         System.out.println("Total number of samples: " + numSamples);
         System.out.println("Length of data: " + data_len);
 
+//        XYChart.Series series = new XYChart.Series();
+//
+//        for (int i=0; i<audioData.length; i++) {
+//            series.getData().add(new XYChart.Data(String.valueOf(i), audioData[i]));
+//        }
+//        System.out.println("Hello");
+//        lineChart.getData().addAll(series);
         dataInputStream.close();
         fileInputStream.close();
 ///////////////////////////////////////////////////////////////////////////////
