@@ -2,26 +2,30 @@ package com.example.cmpt365_project1;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 public class MainController {
     @FXML
     private Label welcomeText;
+
+    @FXML
+    private NumberAxis xAxis = new NumberAxis();
+    @FXML
+    private NumberAxis yAxis = new NumberAxis();
+    @FXML
+    private LineChart<Number, Number> leftLineChart = new LineChart<>(xAxis, yAxis);
+    @FXML
+    private LineChart<Number, Number> rightLineChart = new LineChart<>(xAxis, yAxis);
 
     public static MainController object;
 
@@ -55,15 +59,100 @@ public class MainController {
         if (file != null) {
             System.out.println("File selected! --> " + file.getPath());
 
-            ChartScreenController.getInstance().setFile(file);
-            ChartScreenController.getInstance().run();
+            FileInputStream fileInputStream = new FileInputStream(file);
+            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ChartScreen.fxml")));
-            Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setTitle("Waveform");
-            stage.setScene(scene);
-            stage.show();
+            byte[] riff = new byte[4];
+            dataInputStream.read(riff);
+            String riffHeader = new String(riff);
+            if (!riffHeader.equals("RIFF")) {
+                System.out.println("NOT A VALID WAV FILE (RIFF)");
+                return;
+            }
+
+            int fileSize = Integer.reverseBytes(dataInputStream.readInt());
+
+            byte[] wave = new byte[4];
+            dataInputStream.read(wave);
+            String waveHeader = new String(wave);
+            if (!waveHeader.equals("WAVE")) {
+                System.out.println("NOT A VALID WAV FILE (WAVE)");
+                return;
+            }
+
+            byte[] fmt = new byte[4];
+            dataInputStream.read(fmt);
+            String fmtHeader = new String(fmt);
+            if (!fmtHeader.equals("fmt ")) {
+                System.out.println("INVALID 'fmt' SUBCHUNK");
+                return;
+            }
+
+            int formatSize = Integer.reverseBytes(dataInputStream.readInt());
+            short audioFormat = Short.reverseBytes(dataInputStream.readShort());
+            short numChannels = Short.reverseBytes(dataInputStream.readShort());
+            int sampleRate = Integer.reverseBytes(dataInputStream.readInt());
+            int byteRate = Integer.reverseBytes(dataInputStream.readInt());
+            short blockAlign = Short.reverseBytes(dataInputStream.readShort());
+            short bitsPerSample = Short.reverseBytes(dataInputStream.readShort());
+
+            int data_len = 0;
+            boolean notFound = true;
+
+            while (notFound) {
+                byte[] chunk = new byte[4];
+                dataInputStream.read(chunk);
+                String chunkID = new String(chunk);
+                if (!chunkID.equals("data")) {
+                    int chunkLen = Integer.reverseBytes(dataInputStream.readInt());
+                    byte[] junk = new byte[chunkLen];
+                    dataInputStream.read(junk, 0, chunkLen);
+                } else {
+                    notFound = false;
+                    data_len = Integer.reverseBytes(dataInputStream.readInt());
+                }
+            }
+
+            int numSamples = data_len / (numChannels * bitsPerSample / 8);
+
+            short[] leftAudio = new short[numSamples];
+            short[] rightAudio = new short[numSamples];
+            for (int i=0;i<numSamples; i++) {
+                leftAudio[i] = Short.reverseBytes(dataInputStream.readShort());
+                rightAudio[i] = Short.reverseBytes(dataInputStream.readShort());
+            }
+
+            System.out.println("File Size: " + fileSize + " Bytes");
+            System.out.println("Format Size: " + formatSize);
+            System.out.println("Audio Format: " + audioFormat);
+            System.out.println("Channels: " + numChannels);
+            System.out.println("Sample Rate: " + sampleRate + "Hz");
+            System.out.println("Bits per Sample: " + bitsPerSample);
+            System.out.println("Byte Rate: " + byteRate);
+            System.out.println("Block Align: " + blockAlign);
+            System.out.println("Total number of samples: " + numSamples);
+            System.out.println("Length of data: " + data_len);
+
+            XYChart.Series<Number, Number> leftSeries = new XYChart.Series<>();
+            XYChart.Series<Number, Number> rightSeries = new XYChart.Series<>();
+
+            int i;
+            String index;
+            for (i=0; i<numSamples; i++) {
+                index = String.valueOf(i);
+                System.out.println(i);
+                leftSeries.getData().add(new XYChart.Data(index, leftAudio[i]));
+                rightSeries.getData().add(new XYChart.Data(index, rightAudio[i]));
+            }
+            leftLineChart.setLegendVisible(false);
+            leftLineChart.setCreateSymbols(false);
+            leftLineChart.getData().add(leftSeries);
+            rightLineChart.setLegendVisible(false);
+            rightLineChart.setCreateSymbols(false);
+            rightLineChart.getData().add(rightSeries);
+
+            dataInputStream.close();
+            fileInputStream.close();
 
         }
 
