@@ -21,7 +21,7 @@
             <Font name="Cambria" size="16.0" />
          </font>
       </Label>
-      <LineChart fx:id="leftLineChart" animated="false" layoutX="67.0" layoutY="79.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0">
+      <LineChart fx:id="leftLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalGridLinesVisible="false" layoutX="67.0" layoutY="79.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0">
         <xAxis>
           <CategoryAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
         </xAxis>
@@ -29,7 +29,7 @@
           <NumberAxis animated="false" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
         </yAxis>
       </LineChart>
-      <LineChart fx:id="rightLineChart" layoutX="66.0" layoutY="394.0" prefHeight="308.0" prefWidth="464.0">
+      <LineChart fx:id="rightLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalGridLinesVisible="false" layoutX="66.0" layoutY="394.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0">
         <xAxis>
           <CategoryAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
         </xAxis>

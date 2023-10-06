@@ -13,11 +13,12 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainController {
     @FXML
     private Label welcomeText;
-
     @FXML
     private NumberAxis xAxis = new NumberAxis();
     @FXML
@@ -136,25 +137,34 @@ public class MainController {
             XYChart.Series<Number, Number> leftSeries = new XYChart.Series<>();
             XYChart.Series<Number, Number> rightSeries = new XYChart.Series<>();
 
+            rightLineChart.setLegendVisible(false);
+            rightLineChart.setCreateSymbols(false);
+            leftLineChart.setLegendVisible(false);
+            leftLineChart.setCreateSymbols(false);
+
+            List<XYChart.Data<Number, Number>> leftData = new ArrayList<>();
+            List<XYChart.Data<Number, Number>> rightData = new ArrayList<>();
+
             int i;
             String index;
             for (i=0; i<numSamples; i++) {
                 index = String.valueOf(i);
-                System.out.println(i);
-                leftSeries.getData().add(new XYChart.Data(index, leftAudio[i]));
-                rightSeries.getData().add(new XYChart.Data(index, rightAudio[i]));
+                leftData.add(i, new XYChart.Data(index, leftAudio[i]));
+                rightData.add(i, new XYChart.Data(index, rightAudio[i]));
             }
-            leftLineChart.setLegendVisible(false);
-            leftLineChart.setCreateSymbols(false);
+            leftSeries.getData().addAll(leftData);
+            rightSeries.getData().addAll(rightData);
+
+            leftLineChart.getData().clear();
+            rightLineChart.getData().clear();
             leftLineChart.getData().add(leftSeries);
-            rightLineChart.setLegendVisible(false);
-            rightLineChart.setCreateSymbols(false);
             rightLineChart.getData().add(rightSeries);
+//            leftSeries.getNode().setStyle("-fx-stroke-width: 1px;");
+//            rightSeries.getNode().setStyle("-fx-stroke-width: 1px;");
 
             dataInputStream.close();
             fileInputStream.close();
 
         }
-
     }
 }
