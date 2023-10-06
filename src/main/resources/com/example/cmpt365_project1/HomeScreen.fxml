@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -21,17 +20,17 @@
             <Font name="Cambria" size="16.0" />
          </font>
       </Label>
-      <LineChart fx:id="leftLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalGridLinesVisible="false" layoutX="67.0" layoutY="79.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0">
+      <LineChart fx:id="leftLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalZeroLineVisible="false" layoutX="67.0" layoutY="79.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0" verticalGridLinesVisible="false">
         <xAxis>
-          <CategoryAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+          <NumberAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
         </xAxis>
         <yAxis>
           <NumberAxis animated="false" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
         </yAxis>
       </LineChart>
-      <LineChart fx:id="rightLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalGridLinesVisible="false" layoutX="66.0" layoutY="394.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0">
+      <LineChart fx:id="rightLineChart" alternativeRowFillVisible="false" animated="false" createSymbols="false" horizontalZeroLineVisible="false" layoutX="66.0" layoutY="394.0" legendVisible="false" prefHeight="308.0" prefWidth="464.0" verticalGridLinesVisible="false">
         <xAxis>
-          <CategoryAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+          <NumberAxis animated="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
         </xAxis>
         <yAxis>
           <NumberAxis animated="false" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
@@ -43,6 +42,16 @@
          </font>
       </Label>
       <Label layoutX="86.0" layoutY="388.0" text="Right Channel:">
+         <font>
+            <Font name="Cambria" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="samplesLabel" layoutX="220.0" layoutY="384.0" text="Samples" textFill="#1d00ff" visible="false">
+         <font>
+            <Font name="Cambria" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="sampleRateLabel" layoutX="365.0" layoutY="384.0" text="Sample Rate" textFill="#1d00ff" visible="false">
          <font>
             <Font name="Cambria" size="14.0" />
          </font>

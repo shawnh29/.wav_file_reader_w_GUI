@@ -18,8 +18,6 @@ import java.util.List;
 
 public class MainController {
     @FXML
-    private Label welcomeText;
-    @FXML
     private NumberAxis xAxis = new NumberAxis();
     @FXML
     private NumberAxis yAxis = new NumberAxis();
@@ -27,27 +25,13 @@ public class MainController {
     private LineChart<Number, Number> leftLineChart = new LineChart<>(xAxis, yAxis);
     @FXML
     private LineChart<Number, Number> rightLineChart = new LineChart<>(xAxis, yAxis);
-
-    public static MainController object;
+    @FXML
+    private Label samplesLabel;
+    @FXML
+    private Label sampleRateLabel;
 
     public MainController() {
 
-    }
-
-    public static MainController getInstance() {
-        if (object == null) {
-            synchronized (MainController.class) {
-                if (object == null) {
-                    object = new MainController();
-                }
-            }
-        }
-        return object;
-    }
-
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
     }
 
     //function that opens a file explorer and prompts user to select a .wav file and processes it
@@ -146,11 +130,9 @@ public class MainController {
             List<XYChart.Data<Number, Number>> rightData = new ArrayList<>();
 
             int i;
-            String index;
             for (i=0; i<numSamples; i++) {
-                index = String.valueOf(i);
-                leftData.add(i, new XYChart.Data(index, leftAudio[i]));
-                rightData.add(i, new XYChart.Data(index, rightAudio[i]));
+                leftData.add(i, new XYChart.Data(i, leftAudio[i]));
+                rightData.add(i, new XYChart.Data(i, rightAudio[i]));
             }
             leftSeries.getData().addAll(leftData);
             rightSeries.getData().addAll(rightData);
@@ -159,8 +141,13 @@ public class MainController {
             rightLineChart.getData().clear();
             leftLineChart.getData().add(leftSeries);
             rightLineChart.getData().add(rightSeries);
-//            leftSeries.getNode().setStyle("-fx-stroke-width: 1px;");
-//            rightSeries.getNode().setStyle("-fx-stroke-width: 1px;");
+            leftSeries.getNode().setStyle("-fx-stroke-width: 1.2px;");
+            rightSeries.getNode().setStyle("-fx-stroke-width: 1.2px;");
+
+            samplesLabel.setText("# of Samples: " + numSamples);
+            sampleRateLabel.setText("Sample Rate: " + sampleRate +  " Hz");
+            samplesLabel.setVisible(true);
+            sampleRateLabel.setVisible(true);
 
             dataInputStream.close();
             fileInputStream.close();
