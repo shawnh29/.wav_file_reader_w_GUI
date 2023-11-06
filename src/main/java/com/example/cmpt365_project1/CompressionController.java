@@ -84,40 +84,43 @@ public class CompressionController {
             // do i need to combine both channels?? --> i only need 1 hashmap??
             HashMap<Short, Integer> map = new HashMap<>();
             HashMap<Short, Integer> mapSorted = new HashMap<>();
-            HashMap<Short, Integer> map2 = new HashMap<>();
+//            HashMap<Short, Integer> map2 = new HashMap<>();
 
             short[] leftAudio = new short[numSamples];
-            short[] rightAudio = new short[numSamples];
+//            short[] rightAudio = new short[numSamples];
             for (int i=0;i<numSamples; i++) {
                 leftAudio[i] = Short.reverseBytes(dataInputStream.readShort());
-                rightAudio[i] = Short.reverseBytes(dataInputStream.readShort());
+//                rightAudio[i] = Short.reverseBytes(dataInputStream.readShort());
 
                 if (!map.containsKey(leftAudio[i])) {
                     map.put(leftAudio[i], 1);
                 } else {
                     map.replace(leftAudio[i], map.get(leftAudio[i]), map.get(leftAudio[i])+1);
                 }
-                if (!map2.containsKey(rightAudio[i])) {
-                    map2.put(rightAudio[i], 1);
-                } else {
-                    map2.replace(rightAudio[i], map2.get(rightAudio[i]), map2.get(rightAudio[i])+1);
-                }
+//                if (!map2.containsKey(rightAudio[i])) {
+//                    map2.put(rightAudio[i], 1);
+//                } else {
+//                    map2.replace(rightAudio[i], map2.get(rightAudio[i]), map2.get(rightAudio[i])+1);
+//                }
             }
             List<Map.Entry<Short, Integer>> sortedMap = new ArrayList<>(map.entrySet());
             sortedMap.sort(Map.Entry.comparingByValue());
-            sortedMap.remove(sortedMap.size()-1);
+//            sortedMap.remove(sortedMap.size()-1);
 
+            System.out.println("Size of file: " + fileSize);
+            System.out.println("Num of samples: " + numSamples);
             List<Float> probabilityList = new ArrayList<>();
             for (Map.Entry<Short, Integer> entry : sortedMap) {
-                probabilityList.add( (float) entry.getValue() / sortedMap.size());
+                probabilityList.add( (float) entry.getValue() / numSamples);
             }
             System.out.println(sortedMap);
             System.out.println(probabilityList);
 
             for (int i=0; i<sortedMap.size(); i++) {
-                double val = -1 * ( probabilityList.get(i) * (Math.log10(probabilityList.get(i)) / Math.log10(2)) );
-                entropy += val;
+                double val = ( probabilityList.get(i) * (Math.log10(probabilityList.get(i)) / Math.log10(2)) );
+                entropy = entropy - val;
             }
+//            entropy *= -1;
             DecimalFormat df = new DecimalFormat("#.####");
             df.setRoundingMode(RoundingMode.CEILING);
             entropy = Double.parseDouble(df.format(entropy));
@@ -125,7 +128,7 @@ public class CompressionController {
             System.out.println("Entropy: " + entropy);
 
             System.out.println("Length of hashmap: " + map.size());
-            System.out.println("Length of hashmap2: " + map2.size());
+//            System.out.println("Length of hashmap2: " + map2.size());
 
         }
         entropyLabel.setVisible(true);
