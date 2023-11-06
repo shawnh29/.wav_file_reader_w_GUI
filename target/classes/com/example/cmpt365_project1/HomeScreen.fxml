@@ -56,5 +56,6 @@
             <Font name="Cambria" size="14.0" />
          </font>
       </Label>
+      <Button layoutX="399.0" layoutY="57.0" mnemonicParsing="false" onAction="#switchToCompressionScreen" text="Go to Compression" />
    </children>
 </AnchorPane>
