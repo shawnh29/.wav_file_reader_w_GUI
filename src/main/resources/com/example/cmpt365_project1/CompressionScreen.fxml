@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="590.0" style="-fx-background-color: lightgreen;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cmpt365_project1.CompressionController">
+   <children>
+      <Button layoutX="266.0" layoutY="59.0" mnemonicParsing="false" onAction="#openFile" text="Open File" />
+      <Label layoutX="201.0" layoutY="14.0" text="Audio Compressor">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="entropyLabel" layoutX="264.0" layoutY="139.0" text="Entropy: " visible="false">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="avgCodeLenLabel" layoutX="212.0" layoutY="219.0" text="Average Code Length:" visible="false">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

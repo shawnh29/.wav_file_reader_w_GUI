@@ -2,11 +2,15 @@ package com.example.cmpt365_project1;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.DataInputStream;
@@ -14,7 +18,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+// For the compression part, maybe go through each sample, and each sample will have an "amplitude value",
+// maybe that value can be an entry in a frequency table?
+// ex. amplitude value 43 --> fMap['43'] = x
 
 public class MainController {
     @FXML
@@ -29,11 +38,23 @@ public class MainController {
     private Label samplesLabel;
     @FXML
     private Label sampleRateLabel;
+    private Parent root;
+    private Scene scene;
+    private Stage stage;
 
     public MainController() {
 
     }
 
+    @FXML
+    public void switchToCompressionScreen() throws IOException {
+        root = FXMLLoader.load(getClass().getResource("CompressionScreen.fxml"));
+        stage = (Stage) sampleRateLabel.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setTitle("Audio Compression");
+        stage.setScene(scene);
+        stage.show();
+    }
     //function that opens a file explorer and prompts user to select a .wav file and processes it
     public void openFileClicked(ActionEvent e) throws IOException, UnsupportedAudioFileException {
         System.out.println("Choose a file..");
@@ -100,13 +121,27 @@ public class MainController {
 
             int numSamples = data_len / (numChannels * bitsPerSample / 8);
 
+//            HashMap<Short, Integer> map = new HashMap<>();
+//            HashMap<Short, Integer> map2 = new HashMap<>();
             short[] leftAudio = new short[numSamples];
             short[] rightAudio = new short[numSamples];
             for (int i=0;i<numSamples; i++) {
                 leftAudio[i] = Short.reverseBytes(dataInputStream.readShort());
                 rightAudio[i] = Short.reverseBytes(dataInputStream.readShort());
-            }
 
+//                if (!map.containsKey(leftAudio[i])) {
+//                    map.put(leftAudio[i], 1);
+//                } else {
+//                    map.replace(leftAudio[i], map.get(leftAudio[i]), map.get(leftAudio[i])+1);
+//                }
+//                if (!map2.containsKey(rightAudio[i])) {
+//                    map2.put(rightAudio[i], 1);
+//                } else {
+//                    map2.replace(rightAudio[i], map2.get(rightAudio[i]), map2.get(rightAudio[i])+1);
+//                }
+            }
+//            System.out.println("Length of hashmap: " + map.size());
+//            System.out.println("Length of hashmap2: " + map2.size());
             System.out.println("File Size: " + fileSize + " Bytes");
             System.out.println("Format Size: " + formatSize);
             System.out.println("Audio Format: " + audioFormat);
