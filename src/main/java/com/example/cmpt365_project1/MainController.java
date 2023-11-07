@@ -121,27 +121,13 @@ public class MainController {
 
             int numSamples = data_len / (numChannels * bitsPerSample / 8);
 
-//            HashMap<Short, Integer> map = new HashMap<>();
-//            HashMap<Short, Integer> map2 = new HashMap<>();
             short[] leftAudio = new short[numSamples];
             short[] rightAudio = new short[numSamples];
             for (int i=0;i<numSamples; i++) {
                 leftAudio[i] = Short.reverseBytes(dataInputStream.readShort());
                 rightAudio[i] = Short.reverseBytes(dataInputStream.readShort());
-
-//                if (!map.containsKey(leftAudio[i])) {
-//                    map.put(leftAudio[i], 1);
-//                } else {
-//                    map.replace(leftAudio[i], map.get(leftAudio[i]), map.get(leftAudio[i])+1);
-//                }
-//                if (!map2.containsKey(rightAudio[i])) {
-//                    map2.put(rightAudio[i], 1);
-//                } else {
-//                    map2.replace(rightAudio[i], map2.get(rightAudio[i]), map2.get(rightAudio[i])+1);
-//                }
             }
-//            System.out.println("Length of hashmap: " + map.size());
-//            System.out.println("Length of hashmap2: " + map2.size());
+
             System.out.println("File Size: " + fileSize + " Bytes");
             System.out.println("Format Size: " + formatSize);
             System.out.println("Audio Format: " + audioFormat);
