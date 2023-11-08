@@ -17,16 +17,15 @@ public class CompressionController {
     @FXML
     private Label avgCodeLenLabel;
     private double entropy = 0.0;
-//    private static List<Map.Entry<Short, Integer>> frequencyList = new ArrayList<>();
     public void openFile() throws IOException {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(".wav files", "*.wav"));
         File file = fc.showOpenDialog(null);
         entropy = 0.0;
         entropyLabel.setText("Entropy: ");
+        avgCodeLenLabel.setText("Average Code Length: ");
 
         if (file != null) {
-            System.out.println("File selected! --> " + file.getPath());
             FileInputStream fileInputStream = new FileInputStream(file);
             DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 
@@ -84,9 +83,11 @@ public class CompressionController {
 
             HashMap<Short, Integer> map = new HashMap<>();
 
+            // we are combining both left and right channels so actual number of samples = 2 * numSamples
             short[] samples = new short[numSamples*2];
             for (int i=0;i<numSamples*2; i++) {
                 samples[i] = Short.reverseBytes(dataInputStream.readShort());
+                // putting the amplitude values into a hashmap, if a key value already exists, then just increment the frequency value
                 if (!map.containsKey(samples[i])) {
                     map.put(samples[i], 1);
                 } else {
@@ -97,11 +98,7 @@ public class CompressionController {
             List<Map.Entry<Short, Integer>> sortedMap = new ArrayList<>(map.entrySet());
             sortedMap.sort(Map.Entry.comparingByValue());
 
-//            System.out.println(sortedMap);
-//            System.out.println("Size of file: " + fileSize);
-//            System.out.println("Data length: " + data_len);
-//            System.out.println("Num of samples: " + numSamples);
-
+            // calculating entropy
             for (int i=0; i<sortedMap.size(); i++) {
                 double p = 1.0 * sortedMap.get(i).getValue() / (numSamples*2);
                 if (p > 0) {
@@ -109,13 +106,16 @@ public class CompressionController {
                     entropy = entropy - val;
                 }
             }
-            System.out.println("");
             DecimalFormat df = new DecimalFormat("#.######");
             df.setRoundingMode(RoundingMode.CEILING);
+
             entropy = Double.parseDouble(df.format(entropy));
             entropyLabel.setText(entropyLabel.getText() + entropy);
             System.out.println("Entropy: " + entropy);
-            float avgCodeLen = HuffmanNode.runHuffman(sortedMap);
+
+            // running the Huffman Coding code
+            float avgCodeLen = HuffmanNode.runHuffman(sortedMap, numSamples);
+            avgCodeLen = Float.parseFloat(df.format(avgCodeLen));
             avgCodeLenLabel.setText(avgCodeLenLabel.getText() + avgCodeLen);
         }
         entropyLabel.setVisible(true);

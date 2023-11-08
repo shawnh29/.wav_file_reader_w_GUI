@@ -13,12 +13,12 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Label fx:id="entropyLabel" layoutX="264.0" layoutY="139.0" text="Entropy: " visible="false">
+      <Label fx:id="entropyLabel" layoutX="229.0" layoutY="141.0" text="Entropy: " visible="false">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="avgCodeLenLabel" layoutX="212.0" layoutY="219.0" text="Average Code Length:" visible="false">
+      <Label fx:id="avgCodeLenLabel" layoutX="152.0" layoutY="221.0" text="Average Code Length: " visible="false">
          <font>
             <Font size="18.0" />
          </font>

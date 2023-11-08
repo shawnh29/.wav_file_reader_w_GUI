@@ -2,7 +2,7 @@ package com.example.cmpt365_project1;
 
 import java.util.*;
 
-public class HuffmanNode implements Comparable<HuffmanNode>{
+public class HuffmanNode implements Comparable<HuffmanNode> {
     private int frequency;
     private HuffmanNode left;
     private HuffmanNode right;
@@ -14,51 +14,66 @@ public class HuffmanNode implements Comparable<HuffmanNode>{
         this.left = null;
         this.right = null;
     }
+
+    // so that the nodes can be compared by the PriorityQueue
     @Override
     public int compareTo(HuffmanNode node) {
         return this.frequency - node.frequency;
     }
-    public static void generateCodes (HuffmanNode node, String code, HashMap<Short, String> codewords) {
-        if (node == null) {
-            return;
-        }
-        generateCodes(node.left, code + "0", codewords);
-        // if it IS leaf node, add its code and value to the hashmap
-        if (node.left == null && node.right == null) {
-            codewords.put(node.num, code);
-        }
-        generateCodes(node.right, code + "1", codewords);
-    }
-    public static float runHuffman(List<Map.Entry<Short, Integer>> frequencyList) {
-        PriorityQueue<HuffmanNode> queue = new PriorityQueue<>();
 
-        for (Map.Entry<Short, Integer> entry : frequencyList) {
-            queue.add(new HuffmanNode(entry.getValue(), entry.getKey()));
+    public static float runHuffman(List<Map.Entry<Short, Integer>> freqList, int numSamples) {
+        // this hashmap will be used later when we need the frequencies
+        HashMap<Short, Integer> map = new HashMap<>();
+
+        PriorityQueue<HuffmanNode> pq = new PriorityQueue<>();
+
+        // inserting all the leaf nodes into priority queue
+        for (Map.Entry<Short, Integer> entry : freqList) {
+            HuffmanNode newNode = new HuffmanNode(entry.getValue(), entry.getKey());
+            pq.add(newNode);
+            map.put(entry.getKey(), entry.getValue());
         }
 
-        while (queue.size() > 1) {
-            HuffmanNode leftNode = queue.poll();
-            HuffmanNode rightNode = queue.poll();
-            HuffmanNode parentNode = new HuffmanNode(leftNode.frequency + Objects.requireNonNull(rightNode).frequency, (short) -1);
+        // we loop until we only have the root node left
+        while (pq.size() > 1) {
+            HuffmanNode leftNode = pq.poll();
+            HuffmanNode rightNode = pq.poll();
+            // create a parent node with the frequency = left + right
+            HuffmanNode parentNode = new HuffmanNode(leftNode.frequency + rightNode.frequency, (short) -1);
 
             parentNode.left = leftNode;
             parentNode.right = rightNode;
 
-            queue.add(parentNode);
+            // add the parent node back into the priority queue
+            pq.add(parentNode);
         }
-        HuffmanNode rootNode = queue.poll();
-
+        // now pq just has the root node
+        HuffmanNode root = pq.poll();
         HashMap<Short, String> codewords = new HashMap<>();
-        generateCodes(rootNode, "", codewords);
+        generateCodes(root, "", codewords);
 
-        System.out.println(codewords);
+//        System.out.println(codewords);
 
-        int sum = 0;
+        // the average codeword length is: (frequency/total number of samples) * codeword length
+        float avg = 0;
         for (Map.Entry<Short, String> entry : codewords.entrySet()) {
-            sum += entry.getValue().length();               // maybe has to be a weighted average??
+            avg += ((float) map.get(entry.getKey()) / (numSamples * 2)) * entry.getValue().length();
         }
-        System.out.println("Sum: " + sum + " Len: " + codewords.size());
-        System.out.println("Average codeword length: " + (float) sum / codewords.size());
-        return (float) sum / codewords.size();
+        System.out.println("Average codeword length is: " + avg);
+        return avg;
+    }
+    public static void generateCodes(HuffmanNode node, String code, HashMap<Short, String> codewordList) {
+        // base case
+        if (node == null) {
+            return;
+        }
+        // if the current node is a leaf node, add the key and codeword into the hashmap
+        if (node.left == null && node.right == null) {
+            codewordList.put(node.num, code);
+        }
+        // recurse on the node's left child
+        generateCodes(node.left, code + "0", codewordList);
+        // recurse on the node's right child
+        generateCodes(node.right, code + "1", codewordList);
     }
 }
