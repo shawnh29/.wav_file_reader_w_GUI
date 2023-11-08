@@ -16,6 +16,8 @@ public class CompressionController {
     private Label entropyLabel;
     @FXML
     private Label avgCodeLenLabel;
+    @FXML
+    private Label fileNameLabel;
     private double entropy = 0.0;
     public void openFile() throws IOException {
         FileChooser fc = new FileChooser();
@@ -26,6 +28,8 @@ public class CompressionController {
         avgCodeLenLabel.setText("Average Code Length: ");
 
         if (file != null) {
+            fileNameLabel.setText("File: " + file.getName());
+            fileNameLabel.setVisible(true);
             FileInputStream fileInputStream = new FileInputStream(file);
             DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 

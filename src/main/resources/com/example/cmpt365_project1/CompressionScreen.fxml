@@ -18,9 +18,14 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="avgCodeLenLabel" layoutX="152.0" layoutY="221.0" text="Average Code Length: " visible="false">
+      <Label fx:id="avgCodeLenLabel" layoutX="154.0" layoutY="221.0" text="Average Code Length: " visible="false">
          <font>
             <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="fileNameLabel" layoutX="245.0" layoutY="335.0" text="File: " visible="false">
+         <font>
+            <Font size="14.0" />
          </font>
       </Label>
    </children>
